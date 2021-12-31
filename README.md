@@ -4,7 +4,7 @@ Turn your prose into a constant stream of encrypted and meaningless-sounding fiv
 
 ## What?
 
-This will convert a string of text into ASCII codes, and then each of those characters into a [proquint][], and vice versa.
+This will convert a string of text into UTF-8 codes, and then each of those characters into a [proquint][], and vice versa.
 
 *I personally found the original paper kind of difficult to parse, so if that happens for you, try checking my [wiki page on proquints](https://www.tinybrain.fans/proquints.html) to see if that helps, as it is a more step-by-step process/how-to.*
 
