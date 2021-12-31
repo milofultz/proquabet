@@ -51,6 +51,35 @@ class TestProquintEncoder(unittest.TestCase):
             actual = proquabet.encode_proquint(example_input)
             self.assertEqual(expected, actual)
 
+    def test_32_bit_number(self):
+        cases = {
+            0xffffffff: 'zuzuz-zuzuz',
+            0x88888888: 'mofam-mofam',
+            0x10101010: 'dabib-dabib',
+            0x12345678: 'damuh-jinum',
+        }
+        for example_input, expected in cases.items():
+            actual = proquabet.encode_proquint(example_input)
+            self.assertEqual(expected, actual)
+
+
+class TestTextToProquint(unittest.TestCase):
+    def test_text_only(self):
+        cases = {
+            'Hello World!': 'hodoj kudos kusob jitoz lanos kibod',
+        }
+        for example_input, expected in cases.items():
+            actual = proquabet.text_to_proquint(example_input)
+            self.assertEqual(expected, actual)
+
+    def test_with_utf_8(self):
+        cases = {
+            '😎 Cool': 'babad-zimav fadag kutoz bados'
+        }
+        for example_input, expected in cases.items():
+            actual = proquabet.text_to_proquint(example_input)
+            self.assertEqual(expected, actual)
+
 
 if __name__ == '__main__':
     unittest.main()
