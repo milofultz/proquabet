@@ -74,7 +74,7 @@ class TestTextToProquint(unittest.TestCase):
 
     def test_with_utf_8(self):
         cases = {
-            '😎 Cool': 'babad-zimav fadag kutoz bados'
+            '😎 Cool': 'babad-zimav fadag kutoz bados',
         }
         for example_input, expected in cases.items():
             actual = proquabet.text_to_proquint(example_input)
