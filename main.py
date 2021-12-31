@@ -1,32 +1,19 @@
 from collections.abc import Iterator
+from random import randint
+import sys
 
 
-LETTERS = {
-    'consonants': [
-        'b',
-        'd',
-        'f',
-        'g',
-        'h',
-        'j',
-        'k',
-        'l',
-        'm',
-        'n',
-        'p',
-        'r',
-        's',
-        't',
-        'v',
-        'z',
-    ],
-    'vowels': [
-        'a',
-        'i',
-        'o',
-        'u',
-    ]
-}
+PUNCTUATION = '!.?,:;'
+CONSONANTS = [
+    'b', 'd', 'f', 'g',
+    'h', 'j', 'k', 'l',
+    'm', 'n', 'p', 'r',
+    's', 't', 'v', 'z',
+]
+VOWELS = [
+    'a', 'i',
+    'o', 'u',
+]
 
 
 def decode_text(chars: str) -> list:
@@ -36,60 +23,82 @@ def decode_text(chars: str) -> list:
 
 def split_binary_number(number: int) -> Iterator[int]:
     binary_number = f'{number:016b}'
-    state = 'consonant'
+    is_consonant = True
 
     while binary_number:
-        if state == 'consonant':
-            state = 'vowel'
+        if is_consonant:
             consonant, binary_number = int(binary_number[0:4], 2), binary_number[4:]
             yield consonant
         else:  # state == 'vowel'
-            state = 'consonant'
             vowel, binary_number = int(binary_number[0:2], 2), binary_number[2:]
             yield vowel
+
+        is_consonant = not is_consonant
 
 
 def encode_proquint(number: int) -> str:
     """ Converts number into proquint """
+    nums = [number]
     if number > 65536:
         nums = [number // 65536, number & 0xffff]
-    else:
-        nums = [number]
     words = []
     for num in nums:
         letter = split_binary_number(num)
-        word = LETTERS['consonants'][next(letter)]
-        word += LETTERS['vowels'][next(letter)]
-        word += LETTERS['consonants'][next(letter)]
-        word += LETTERS['vowels'][next(letter)]
-        word += LETTERS['consonants'][next(letter)]
+        word = CONSONANTS[next(letter)]
+        word += VOWELS[next(letter)]
+        word += CONSONANTS[next(letter)]
+        word += VOWELS[next(letter)]
+        word += CONSONANTS[next(letter)]
         words.append(word)
 
     return '-'.join(words)
 
 
-def encode_ascii_proquint(first_number: int, second_number: int) -> str:
-    """ Converts numbers into proquint """
-    big_number = first_number * (2 ** 8) + second_number
-    letter = split_binary_number(big_number)
-    word = LETTERS['consonants'][next(letter)]
-    word += LETTERS['vowels'][next(letter)]
-    word += LETTERS['consonants'][next(letter)]
-    word += LETTERS['vowels'][next(letter)]
-    word += LETTERS['consonants'][next(letter)]
-
-    return word
-
-
-def text_to_proquint(text: str) -> str:
+def text_to_proquint(text: str, random_punc: bool = False) -> str:
     decoded_text = decode_text(text)
+
     output = ''
     i = 0
+    capitalize = True
+    start = True
+
     while i < len(decoded_text):
+        if not start and random_punc:
+            if randint(0, 12) == 6:
+                output += PUNCTUATION[randint(3, len(PUNCTUATION) - 1)]
+            elif randint(0, 12) == 7:
+                output += PUNCTUATION[randint(0, 2)]
+                capitalize = True
+            elif randint(0, 25) == 7:
+                output += PUNCTUATION[randint(0, 2)] + '\n\n'
+                capitalize = True
+                start = True
+
         if i != len(decoded_text) - 1 and decoded_text[i] < 256 and decoded_text[i + 1] < 256:
-            output += encode_ascii_proquint(decoded_text[i], decoded_text[i + 1]) + ' '
-            i += 2
-        else:
-            output += encode_proquint(decoded_text[i]) + ' '
+            current_letter = decoded_text[i] * (2 ** 8) + decoded_text[i + 1]
             i += 1
-    return output.rstrip()
+        else:
+            current_letter = decoded_text[i]
+
+        new_word = encode_proquint(current_letter)
+        i += 1
+
+        if not start:
+            output += ' '
+        else:
+            start = False
+
+        if random_punc and capitalize:
+            new_word = new_word.capitalize()
+            capitalize = False
+        output += new_word
+
+    output = output.rstrip()
+    if random_punc:
+        output += PUNCTUATION[randint(0, 2)]
+    return output
+
+
+if __name__ == '__main__':
+    for line in sys.stdin:
+        print(text_to_proquint(line, True))
