@@ -125,19 +125,30 @@ class TestProquintDecoder(unittest.TestCase):
 
 class TestTextToProquint(unittest.TestCase):
     def test_text_only(self):
+        # Should encode two ASCII chars into one proquint
         cases = {
             'Hello World!': 'hodoj kudos kusob jitoz lanos kibod',
         }
         for example_input, expected in cases.items():
-            actual = proquabet.text_to_proquint(example_input)
+            actual = proquabet.text_to_proquint(example_input, unicode=False)
+            self.assertEqual(expected, actual)
+
+    def test_text_only_using_unicode(self):
+        # Should encode each ASCII char into its own proquint
+        cases = {
+            'Hello World!': 'badam badoj bados bados badoz babob badil badoz baduf bados badoh babod',
+        }
+        for example_input, expected in cases.items():
+            actual = proquabet.text_to_proquint(example_input, unicode=True)
             self.assertEqual(expected, actual)
 
     def test_with_utf_8(self):
         cases = {
-            '😎 Cool': 'babad-zimav fadag kutoz bados',
+            '€': 'fafos',  # should handle 16-bit unicode characters
+            '😎 Cool': 'babad-zimav babob badag badoz badoz bados',
         }
         for example_input, expected in cases.items():
-            actual = proquabet.text_to_proquint(example_input)
+            actual = proquabet.text_to_proquint(example_input, unicode=True)
             self.assertEqual(expected, actual)
 
     def test_random_punc(self):
@@ -147,7 +158,7 @@ class TestTextToProquint(unittest.TestCase):
         }
         for example_input, expected in cases.items():
             for i in range(25):
-                actual = proquabet.text_to_proquint(example_input, True)
+                actual = proquabet.text_to_proquint(example_input, random_punc=True, unicode=False)
                 actual_filtered = re_punctuation.sub('', actual)\
                     .replace('\n\n', ' ')\
                     .lower()
@@ -163,12 +174,21 @@ class TestProquintToText(unittest.TestCase):
             actual = proquabet.proquint_to_text(example_input)
             self.assertEqual(expected, actual)
 
-    def test_with_utf_8(self):
+    def test_text_only_using_unicode(self):
         cases = {
-            '😎 Cool': 'babad-zimav fadag kutoz bados',
+            'Hello World!': 'badam badoj bados bados badoz babob badil badoz baduf bados badoh babod',
         }
         for expected, example_input in cases.items():
-            actual = proquabet.proquint_to_text(example_input)
+            actual = proquabet.proquint_to_text(example_input, unicode=True)
+            self.assertEqual(expected, actual)
+
+    def test_with_utf_8(self):
+        cases = {
+            '€': 'fafos',  # should handle 16-bit unicode characters
+            '😎 Cool': 'babad-zimav babob badag badoz badoz bados',
+        }
+        for expected, example_input in cases.items():
+            actual = proquabet.proquint_to_text(example_input, unicode=True)
             self.assertEqual(expected, actual)
 
     def test_random_punc(self):

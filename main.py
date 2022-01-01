@@ -93,7 +93,7 @@ def decode_proquint(word: str) -> int:
     return compile_binary_number(nums)
 
 
-def text_to_proquint(text: str, random_punc: bool = False) -> str:
+def text_to_proquint(text: str, random_punc: bool = False, unicode: bool = False) -> str:
     decoded_text = decode_text(text)
 
     output = ''
@@ -113,7 +113,7 @@ def text_to_proquint(text: str, random_punc: bool = False) -> str:
                 capitalize = True
                 start = True
 
-        if i != len(decoded_text) - 1 and decoded_text[i] < 256 and decoded_text[i + 1] < 256:
+        if i != len(decoded_text) - 1 and not unicode:
             current_letter = decoded_text[i] * (2 ** 8) + decoded_text[i + 1]
             i += 1
         else:
@@ -138,7 +138,7 @@ def text_to_proquint(text: str, random_punc: bool = False) -> str:
     return output
 
 
-def proquint_to_text(raw_proquints: str) -> str:
+def proquint_to_text(raw_proquints: str, unicode: bool = False) -> str:
     proquints = raw_proquints.replace('\n\n', ' ').split(' ')
     re_punctuation = re.compile(rf'[{PUNCTUATION}]')
     proquints = [re_punctuation.sub('', p.lower()).strip() for p in proquints]
@@ -146,13 +146,12 @@ def proquint_to_text(raw_proquints: str) -> str:
     output = ''
 
     for word in proquints:
-        if len(word) == 5:
-            decoded = decode_proquint(word)
+        decoded = decode_proquint(word)
+        if not unicode:
             b = f'{decoded:016b}'
             nums = [int(b[:8], 2), int(b[8:], 2)]
             output += decode_nums(nums)
         else:
-            decoded = decode_proquint(word)
             output += decode_nums([decoded])
 
     return output.replace('\x00', '')  # Remove hanging ASCII chars with no pair
@@ -163,11 +162,12 @@ if __name__ == '__main__':
     argparser.add_argument('-encode', '--e', action='store_const', const="encode", default="encode", dest="action", help='Encode text into proquints')
     argparser.add_argument('-decode', '--d', action='store_const', const="decode", dest="action", help='Decode text from proquints')
     argparser.add_argument('-punctuation', '--p', action='store_true', default=False, dest="punctuation", help='Make the text more human-like, with punctuation and capitalization. Used for encoding and decoding.')
+    argparser.add_argument('-unicode', '--u', action='store_true', default=False, dest="unicode", help='Handle characters outside of standard ASCII.')
 
     args = argparser.parse_args()
     if args.action == 'decode':
         for line in sys.stdin:
-            print(proquint_to_text(line))
+            print(proquint_to_text(line, unicode=args.unicode))
     else:
         for line in sys.stdin:
-            print(text_to_proquint(line, args.punctuation))
+            print(text_to_proquint(line, random_punc=args.punctuation, unicode=args.unicode))
