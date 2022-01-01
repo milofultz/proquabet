@@ -1,4 +1,3 @@
-from collections.abc import Iterator
 from random import randint
 import re
 import sys
@@ -22,27 +21,32 @@ def decode_text(chars: str) -> list:
     return [ord(char) for char in chars]
 
 
-def encode_text(numbers: list[int]) -> str:
+def decode_nums(numbers: list[int]) -> str:
     """ Converts list of numbers into a UTF-8 string """
     return ''.join(chr(num) for num in numbers)
 
 
-def split_binary_number(number: int) -> Iterator[int]:
+def split_binary_number(number: int) -> list[int]:
+    """ Split a binary number into meaningful "letters" """
     binary_number = f'{number:016b}'
     is_consonant = True
+    letters = []
 
     while binary_number:
         if is_consonant:
             consonant, binary_number = int(binary_number[0:4], 2), binary_number[4:]
-            yield consonant
-        else:  # state == 'vowel'
+            letters.append(consonant)
+        else:
             vowel, binary_number = int(binary_number[0:2], 2), binary_number[2:]
-            yield vowel
+            letters.append(vowel)
 
         is_consonant = not is_consonant
 
+    return letters
+
 
 def compile_binary_number(numbers: list[int]) -> int:
+    """ Compile a list of numbers into a binary string """
     binary_number = ''
 
     while numbers:
@@ -62,12 +66,12 @@ def encode_proquint(number: int) -> str:
         nums = [number // 65536, number & 0xffff]
     words = []
     for num in nums:
-        letter = split_binary_number(num)
-        word = CONSONANTS[next(letter)]
-        word += VOWELS[next(letter)]
-        word += CONSONANTS[next(letter)]
-        word += VOWELS[next(letter)]
-        word += CONSONANTS[next(letter)]
+        letters = split_binary_number(num)
+        word = CONSONANTS[letters.pop(0)]
+        word += VOWELS[letters.pop(0)]
+        word += CONSONANTS[letters.pop(0)]
+        word += VOWELS[letters.pop(0)]
+        word += CONSONANTS[letters.pop(0)]
         words.append(word)
 
     return '-'.join(words)

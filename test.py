@@ -29,7 +29,7 @@ class TestTextDecoder(unittest.TestCase):
             self.assertEqual(expected, actual)
 
 
-class TestTextEncoder(unittest.TestCase):
+class TestNumberDecoder(unittest.TestCase):
     def test_standard_ascii(self):
         cases = {
             'A A': [0x41, 0x20, 0x41],
@@ -37,7 +37,7 @@ class TestTextEncoder(unittest.TestCase):
             string.printable: [ord(char) for char in string.printable]
         }
         for expected, example_input in cases.items():
-            actual = proquabet.encode_text(example_input)
+            actual = proquabet.decode_nums(example_input)
             self.assertEqual(expected, actual)
 
     def test_utf_8_characters(self):
@@ -49,7 +49,7 @@ class TestTextEncoder(unittest.TestCase):
                               # https://www.utf8-chartable.de/unicode-utf8-table.pl
         }
         for expected, example_input in cases.items():
-            actual = proquabet.encode_text(example_input)
+            actual = proquabet.decode_nums(example_input)
             self.assertEqual(expected, actual)
 
 
