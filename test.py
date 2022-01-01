@@ -178,7 +178,7 @@ class TestProquintToText(unittest.TestCase):
         for expected in cases:
             for i in range(25):
                 random_punc_input = proquabet.text_to_proquint(expected, True)
-                actual = proquabet.proquint_to_text(random_punc_input, True)
+                actual = proquabet.proquint_to_text(random_punc_input)
                 self.assertEqual(expected, actual)
 
 

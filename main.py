@@ -138,11 +138,10 @@ def text_to_proquint(text: str, random_punc: bool = False) -> str:
     return output
 
 
-def proquint_to_text(raw_proquints: str, has_random_punc: bool = False) -> str:
+def proquint_to_text(raw_proquints: str) -> str:
     proquints = raw_proquints.replace('\n\n', ' ').split(' ')
-    if has_random_punc:
-        re_punctuation = re.compile(rf'[{PUNCTUATION}]')
-        proquints = [re_punctuation.sub('', p.lower()).strip() for p in proquints]
+    re_punctuation = re.compile(rf'[{PUNCTUATION}]')
+    proquints = [re_punctuation.sub('', p.lower()).strip() for p in proquints]
 
     output = ''
 
@@ -168,7 +167,7 @@ if __name__ == '__main__':
     args = argparser.parse_args()
     if args.action == 'decode':
         for line in sys.stdin:
-            print(proquint_to_text(line, args.punctuation))
+            print(proquint_to_text(line))
     else:
         for line in sys.stdin:
             print(text_to_proquint(line, args.punctuation))
