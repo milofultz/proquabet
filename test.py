@@ -1,3 +1,4 @@
+import re
 import string
 import unittest
 
@@ -139,6 +140,19 @@ class TestTextToProquint(unittest.TestCase):
             actual = proquabet.text_to_proquint(example_input)
             self.assertEqual(expected, actual)
 
+    def test_random_punc(self):
+        re_punctuation = re.compile(rf'[{proquabet.PUNCTUATION}]')
+        cases = {
+            'Hello World!': 'hodoj kudos kusob jitoz lanos kibod',
+        }
+        for example_input, expected in cases.items():
+            for i in range(25):
+                actual = proquabet.text_to_proquint(example_input, True)
+                actual_filtered = re_punctuation.sub('', actual)\
+                    .replace('\n\n', ' ')\
+                    .lower()
+                self.assertEqual(expected, actual_filtered)
+
 
 class TestProquintToText(unittest.TestCase):
     def test_text_only(self):
@@ -156,6 +170,16 @@ class TestProquintToText(unittest.TestCase):
         for expected, example_input in cases.items():
             actual = proquabet.proquint_to_text(example_input)
             self.assertEqual(expected, actual)
+
+    def test_random_punc(self):
+        cases = [
+            'Hello World!',
+        ]
+        for expected in cases:
+            for i in range(25):
+                random_punc_input = proquabet.text_to_proquint(expected, True)
+                actual = proquabet.proquint_to_text(random_punc_input, True)
+                self.assertEqual(expected, actual)
 
 
 if __name__ == '__main__':

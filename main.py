@@ -1,5 +1,6 @@
 from collections.abc import Iterator
 from random import randint
+import re
 import sys
 
 
@@ -132,8 +133,11 @@ def text_to_proquint(text: str, random_punc: bool = False) -> str:
     return output
 
 
-def proquint_to_text(raw_proquints: str) -> str:
-    proquints = raw_proquints.split(' ')
+def proquint_to_text(raw_proquints: str, has_random_punc: bool = False) -> str:
+    proquints = raw_proquints.replace('\n\n', ' ').split(' ')
+    if has_random_punc:
+        re_punctuation = re.compile(rf'[{PUNCTUATION}]')
+        proquints = [re_punctuation.sub('', p.lower()).strip() for p in proquints]
 
     output = ''
 
@@ -141,8 +145,8 @@ def proquint_to_text(raw_proquints: str) -> str:
         if len(word) == 5:
             decoded = decode_proquint(word)
             b = f'{decoded:016b}'
-            first, second = int(b[:8], 2), int(b[8:], 2)
-            output += decode_nums([first, second])
+            nums = [int(b[:8], 2), int(b[8:], 2)]
+            output += decode_nums(nums)
         else:
             decoded = decode_proquint(word)
             output += decode_nums([decoded])
