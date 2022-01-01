@@ -21,6 +21,11 @@ def decode_text(chars: str) -> list:
     return [ord(char) for char in chars]
 
 
+def encode_text(numbers: list[int]) -> str:
+    """ Converts list of numbers into a UTF-8 string """
+    return ''.join(chr(num) for num in numbers)
+
+
 def split_binary_number(number: int) -> Iterator[int]:
     binary_number = f'{number:016b}'
     is_consonant = True
