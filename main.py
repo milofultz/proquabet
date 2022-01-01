@@ -1,3 +1,4 @@
+import argparse
 from random import randint
 import re
 import sys
@@ -159,5 +160,15 @@ def proquint_to_text(raw_proquints: str, has_random_punc: bool = False) -> str:
 
 
 if __name__ == '__main__':
-    for line in sys.stdin:
-        print(text_to_proquint(line, True))
+    argparser = argparse.ArgumentParser(description='Convert text to and from proquints. Defaults to encoding.')
+    argparser.add_argument('-encode', '--e', action='store_const', const="encode", default="encode", dest="action", help='Encode text into proquints')
+    argparser.add_argument('-decode', '--d', action='store_const', const="decode", dest="action", help='Decode text from proquints')
+    argparser.add_argument('-punctuation', '--p', action='store_true', default=False, dest="punctuation", help='Make the text more human-like, with punctuation and capitalization. Used for encoding and decoding.')
+
+    args = argparser.parse_args()
+    if args.action == 'decode':
+        for line in sys.stdin:
+            print(proquint_to_text(line, args.punctuation))
+    else:
+        for line in sys.stdin:
+            print(text_to_proquint(line, args.punctuation))

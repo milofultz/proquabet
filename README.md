@@ -10,11 +10,31 @@ This will convert a string of text into UTF-8 codes, and then each of those char
 
 ## Usage
 
-You can pass things in via stdin, e.g.
+Pass in the text via stdin to encode it by default, or use the `-decode`/`--d` flag to decode. e.g.
 
 ```bash
 echo "Hello World!" | python3 main.py
+# hodoj kudos kusob jitoz lanos kibod babap
+echo "hodoj kudos kusob jitoz lanos kibod babap" | python3 main.py --d
+# Hello World!
 ```
+
+You can also add the `-punctuation`/`--p` flag to make the encoded output a little more like human-readable text using punctuation and capitalization. This is accounted for automatically on decoding.
+
+```bash
+echo "Hello World!" | python3 main.py --punctuation
+# Hodoj; kudos kusob jitoz lanos kibod babap?
+echo "Hodoj; kudos kusob jitoz lanos kibod babap?" | python3 main.py --d
+# Hello World!
+```
+
+### Flags
+
+Flag | Effect
+--- | ---
+`-encode` / `--e` | Encode text into proquints
+`-decode` / `--d` | Decode text from proquints
+`--punctuation` / `--p` | Make output more human-like, with random punctuation and capitalization.
 
 ## Why? 
 
