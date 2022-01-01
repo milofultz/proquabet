@@ -41,6 +41,19 @@ def split_binary_number(number: int) -> Iterator[int]:
         is_consonant = not is_consonant
 
 
+def compile_binary_number(numbers: list[int]) -> int:
+    binary_number = ''
+
+    while numbers:
+        binary_number += f'{numbers.pop(0):04b}'
+        binary_number += f'{numbers.pop(0):02b}'
+        binary_number += f'{numbers.pop(0):04b}'
+        binary_number += f'{numbers.pop(0):02b}'
+        binary_number += f'{numbers.pop(0):04b}'
+
+    return int(binary_number, 2)
+
+
 def encode_proquint(number: int) -> str:
     """ Converts number into proquint """
     nums = [number]
@@ -57,6 +70,21 @@ def encode_proquint(number: int) -> str:
         words.append(word)
 
     return '-'.join(words)
+
+
+def decode_proquint(word: str) -> int:
+    """ Converts a proquint into a number """
+    word = list(word.replace('-', ''))  # If 32-bit UTF-8
+    nums = []
+
+    while word:
+        nums.append(CONSONANTS.index(word.pop(0)))
+        nums.append(VOWELS.index(word.pop(0)))
+        nums.append(CONSONANTS.index(word.pop(0)))
+        nums.append(VOWELS.index(word.pop(0)))
+        nums.append(CONSONANTS.index(word.pop(0)))
+
+    return compile_binary_number(nums)
 
 
 def text_to_proquint(text: str, random_punc: bool = False) -> str:

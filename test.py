@@ -87,6 +87,41 @@ class TestProquintEncoder(unittest.TestCase):
             self.assertEqual(expected, actual)
 
 
+class TestProquintDecoder(unittest.TestCase):
+    def test_8_bit_number(self):
+        cases = {
+            0x00: 'babab',
+            0xff: 'baguz',
+            0x88: 'bafam',
+            0x10: 'babib',
+        }
+        for expected, example_input in cases.items():
+            actual = proquabet.decode_proquint(example_input)
+            self.assertEqual(expected, actual)
+
+    def test_16_bit_number(self):
+        cases = {
+            0x0000: 'babab',
+            0xffff: 'zuzuz',
+            0x8888: 'mofam',
+            0x1010: 'dabib',
+        }
+        for expected, example_input in cases.items():
+            actual = proquabet.decode_proquint(example_input)
+            self.assertEqual(expected, actual)
+
+    def test_32_bit_number(self):
+        cases = {
+            0xffffffff: 'zuzuz-zuzuz',
+            0x88888888: 'mofam-mofam',
+            0x10101010: 'dabib-dabib',
+            0x12345678: 'damuh-jinum',
+        }
+        for expected, example_input in cases.items():
+            actual = proquabet.decode_proquint(example_input)
+            self.assertEqual(expected, actual)
+
+
 class TestTextToProquint(unittest.TestCase):
     def test_text_only(self):
         cases = {
