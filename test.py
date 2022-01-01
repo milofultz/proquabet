@@ -140,5 +140,23 @@ class TestTextToProquint(unittest.TestCase):
             self.assertEqual(expected, actual)
 
 
+class TestProquintToText(unittest.TestCase):
+    def test_text_only(self):
+        cases = {
+            'Hello World!': 'hodoj kudos kusob jitoz lanos kibod',
+        }
+        for expected, example_input in cases.items():
+            actual = proquabet.proquint_to_text(example_input)
+            self.assertEqual(expected, actual)
+
+    def test_with_utf_8(self):
+        cases = {
+            '😎 Cool': 'babad-zimav fadag kutoz bados',
+        }
+        for expected, example_input in cases.items():
+            actual = proquabet.proquint_to_text(example_input)
+            self.assertEqual(expected, actual)
+
+
 if __name__ == '__main__':
     unittest.main()

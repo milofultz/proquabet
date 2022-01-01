@@ -132,6 +132,24 @@ def text_to_proquint(text: str, random_punc: bool = False) -> str:
     return output
 
 
+def proquint_to_text(raw_proquints: str) -> str:
+    proquints = raw_proquints.split(' ')
+
+    output = ''
+
+    for word in proquints:
+        if len(word) == 5:
+            decoded = decode_proquint(word)
+            b = f'{decoded:016b}'
+            first, second = int(b[:8], 2), int(b[8:], 2)
+            output += decode_nums([first, second])
+        else:
+            decoded = decode_proquint(word)
+            output += decode_nums([decoded])
+
+    return output.replace('\x00', '')  # Remove hanging ASCII chars with no pair
+
+
 if __name__ == '__main__':
     for line in sys.stdin:
         print(text_to_proquint(line, True))
