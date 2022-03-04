@@ -1,3 +1,7 @@
+# Ported to codeberg: https://codeberg.org/milofultz/proquabet
+
+---
+
 # Proquabet
 
 Turn your prose into a constant stream of encrypted and meaningless-sounding five-letter words!
